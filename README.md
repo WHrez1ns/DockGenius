@@ -21,7 +21,7 @@ Este software é uma ferramenta de linha de comando desenvolvida em Python, proj
 
 - [Video Explicativo](colocaolinkaq)
 
-- <a href="https://www.canva.com/design/"> Slides
+- <a href="https://www.canva.com/design/DAFf6JnZJlo/4dJEE_-mZoVnFcOLFnx_eA/view?utm_content=DAFf6JnZJlo&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink"> Slides
   </a><br>
 
 ## Características
