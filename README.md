@@ -424,3 +424,415 @@ Em resumo, o programa é uma ferramenta valiosa para qualquer pessoa ou equipe q
 <a href="https://github.com/Jogaridu"> Jorge Gabriel Ricci Dutra</a>,<a href="https://github.com/Aykie"> Júlia Barboza Brunelli</a>, <a href="https://github.com/NCalegariS"> Nicholas Calegari</a> e <a href="https://github.com/WHrez1ns"> Renan Dias</a>
 <br>
 **RM: 551457,98558, 93912 e 99258.**
+
+
+<br>
+
+# English
+# DockGenius
+
+This software is a command-line tool developed in Python, designed to interact with Docker. It uses the Docker API to perform various operations, providing the user with a friendly and intuitive interface to manage their Docker containers and images.
+
+- Editor Used: <a href="https://code.visualstudio.com/"> Visual Studio Code</a>.
+
+
+- <a href="https://www.canva.com/design/DAFf6JnZJlo/4dJEE_-mZoVnFcOLFnx_eA/view?utm_content=DAFf6JnZJlo&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink"> Slides
+  </a><br>
+
+## Features
+
+- **Container Visualization**: A quick view of all running or stopped Docker containers.
+- **Container Management**: Provides functionalities to create, start, stop, restart, kill, and remove containers.
+- **Logs and Processes**: Allows the user to view container logs and processes running within a container.
+- **Image Management**: Lists all available images and provides an option to remove images.
+- **System Information**: Displays information about the Docker system and its version.
+- **Monitoring**: Offers a view on data usage and ping to check the accessibility of the Docker server.
+- **Friendly Interface**: The command-line interface is colorful and clearly categorized, making navigation and task execution a breeze.
+
+## Setup
+
+The API address is defined through the `decouple` library, allowing the user easy configuration via environment variables.
+
+## Objective
+
+Develop a Python software capable of:
+
+- Performing basic operations with containers and images.
+- Viewing usage statistics of containers managed by the Docker Engine.
+
+Manipulation and data retrieval of containers must be performed through the **Docker API**, with HTTP messages formatted in JSON.
+
+## Context
+
+In this work, the focus is on intensive Docker use, where an application is isolated in containers. For example, a commercial system with a database and three modules would run on four distinct containers.
+
+Docker, originally based on LXC, has evolved to be a cross-platform solution, supporting both Windows and Linux applications.
+
+# **Code Summary**
+
+### Library Imports and Color Configuration
+
+```python
+from decouple import config
+import requests
+
+class Colors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+```
+
+**Explanation:** Initially, the `decouple` and `requests` libraries are imported. The `decouple` library is used to fetch environment variables or configuration values, while `requests` is a popular HTTP library in Python. The `Colors` class defines ANSI escape sequences for coloring text in the terminal.
+
+---
+
+### Helper Functions
+
+```python
+def line():
+    print(f"=======================================================")
+
+def enter_for_continue():
+    line()
+    input("Press" + Colors.BOLD + " ENTER " + Colors.ENDC + "for continue...")
+```
+
+**Explanation:** There are two helper functions defined:
+
+1. `line()`: This function simply prints a line of "=".
+2. `enter_for_continue()`: Prints a line and then prompts the user to press ENTER, providing a pause in execution.
+
+---
+
+### Interaction with Docker via API
+
+1. **Listing Containers**
+
+    ```python
+    def list_containers():
+        print("Listing containers:")
+        line()
+        response = requests.get(f"{API_ADDRESS}/v1.43/containers/json?all=true").json()
+        for container in response:
+            print(Colors.GREEN + "Container:" + Colors.ENDC, container)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function is responsible for listing all the containers managed by the Docker Engine. Through a GET request to the Docker API, it retrieves information about each container and displays them in the console.
+<br>
+
+2. **Creating a Container**
+
+    ```python
+    def create_a_container():
+        print("Creating a container:")
+        line()
+        response = requests.post(f"{API_ADDRESS}/v1.43/containers/create&Hostname=Renan&Image=httpd")
+        print(Colors.GREEN + "Container created:" + Colors.ENDC, response.json(), response.status_code)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function creates a new container using the "httpd" image. It makes a POST request to the Docker API, specifying the details of the new container. The response from the API, including the status code, is then printed.
+
+<br>
+
+3. **Listing Running Processes Inside a Container**
+
+    ```python
+    def list_processes_running_inside_a_container():
+        print("Listing all processes running inside a container:")
+        line()
+        all_containers = requests.get(f"{API_ADDRESS}/v1.43/containers/json?all=true").json()
+        for container in all_containers:
+            container_id = container["Id"]
+            response = requests.get(f"{API_ADDRESS}/v1.43/containers/{container_id}/top").json()
+            print(Colors.GREEN + "Processes:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function retrieves and lists the processes running inside all containers. First, it fetches the list of all containers. Then, for each container, it makes a request to the Docker API to fetch the running processes and prints them on the console.
+
+<br>
+
+4. **Retrieving Logs from a Container**
+
+    ```python
+    def get_container_log():
+        print("Getting containers log:")
+        line()
+        all_containers = requests.get(f"{API_ADDRESS}/v1.43/containers/json?all=true").json()
+        for container in all_containers:
+            container_id = container["Id"]
+            response = requests.get(f"{API_ADDRESS}/v1.43/containers/{container_id}/logs?follow=true&stdout=true").json()
+            print(Colors.GREEN + "Logs:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** The function retrieves and displays the logs from all containers. Just like in the previous function, it starts by obtaining a list of all the containers. For each container, a request is made to retrieve its logs, which are then printed.
+
+<br>
+
+5. **Starting a Container**
+
+    ```python
+    def start_a_container():
+        print("Starting a container:")
+        line()
+        container_id = input("ID or name of the container: ")
+        response = requests.post(f"{API_ADDRESS}/v1.43/containers/{container_id}/start")
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response.status_code)
+        enter_for_continue()
+    ```
+
+   **Explanation:** This function allows the user to start a specific container. The ID or name of the container is requested from the user. Once provided, a POST request is made to start the container. The API's response (status code) is printed.
+
+<br>
+
+6. **Stopping a Container**
+
+    ```python
+    def stop_a_container():
+        print("Stopping a container:")
+        line()
+        container_id = input("ID or name of the container: ")
+        response = requests.post(f"{API_ADDRESS}/v1.43/containers/{container_id}/stop")
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response.status_code)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function allows the user to stop a specific container. Just like in the previous function, the ID or name of the container is requested from the user. Once provided, a POST request is made to stop the container, and the status code is printed.
+
+<br>
+
+7. **Restarting a Container**
+
+    ```python
+    def restart_a_container():
+        print("Restarting a container:")
+        line()
+        container_id = input("ID or name of the container: ")
+        response = requests.post(f"{API_ADDRESS}/v1.43/containers/{container_id}/restart")
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response.status_code)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function restarts a specific container. The user is required to provide the ID or name of the container. The Docker API is then called to restart that container, and the operation's status code is printed.
+
+<br>
+
+8. **Killing a Container**
+
+    ```python
+    def kill_a_container():
+        print("Killing a container:")
+        line()
+        container_id = input("ID or name of the container: ")
+        response = requests.post(f"{API_ADDRESS}/v1.43/containers/{container_id}/kill")
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response.status_code)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function kills a container. It's similar to the previous functions of starting and stopping, but in this case, it forcefully terminates the container. After obtaining the ID or name of the container from the user, the Docker API is called to kill the container, and the status code is printed.
+
+<br>
+
+9. **Removing a Container**
+
+    ```python
+    def remove_a_container():
+        print("Removing a container:")
+        line()
+        container_id = input("ID or name of the container: ")
+        response = requests.delete(f"{API_ADDRESS}/v1.43/containers/{container_id}")
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response.status_code)
+        enter_for_continue()
+    ```
+
+    **Explanation:** The function allows the user to remove a container. After obtaining the ID or name of the container from the user, a DELETE request is made to the Docker API, and the operation's status code is displayed.
+
+<br>
+
+10. **Getting System Information**
+
+    ```python
+    def get_system_information():
+        print("Getting system information:")
+        line()
+        response = requests.get(f"{API_ADDRESS}/v1.43/info").json()
+        print(Colors.GREEN + "System Information:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function retrieves information about the running Docker system. A GET request is made to the Docker API, and the system information is printed.
+
+<br>
+
+11. **Ping**
+
+    ```python
+    def ping():
+        print("Ping:")
+        line()
+        response = requests.get(f"{API_ADDRESS}/v1.43/_ping").text
+        print(Colors.GREEN + "Response:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function simply "pings" the Docker API to check its accessibility. The response from the API is printed.
+
+<br>
+
+12. **Getting Data Usage Information**
+
+    ```python
+    def get_data_usage_information():
+        print("Getting data usage information:")
+        line()
+        response = requests.get(f"{API_ADDRESS}/v1.43/system/df").json()
+        print(Colors.GREEN + "Data Usage Information:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** This function retrieves information about the Docker system's data usage, including details on volumes, containers, etc. The response from the API is printed.
+
+<br>
+
+13. **Getting the Version**
+
+    ```python
+    def get_version():
+        print("Getting Docker version:")
+        line()
+        response = requests.get(f"{API_ADDRESS}/v1.43/version").json()
+        print(Colors.GREEN + "Docker Version:" + Colors.ENDC, response)
+        enter_for_continue()
+    ```
+
+    **Explanation:** Lastly, this function simply retrieves and displays the running Docker's version, using an API call.
+
+---
+
+### **API Configuration and Welcome Message**
+
+```python
+API_ADDRESS = config('API_ADDRESS')
+
+line()
+print(Colors.HEADER + "Welcome to Python App Monitor & Manager from Docker" + Colors.ENDC)
+```
+
+**Explanation:**  
+The API address is obtained from the configuration and stored in `API_ADDRESS`. A line is drawn, and a welcome message is displayed.
+
+### **Main Menu**
+
+```python
+while True:
+    try:
+        line()
+        print("Select a option from interact with the Docker: ")
+        print(Colors.BLUE + "[1] " + Colors.ENDC + "List containers")
+        print(Colors.BLUE + "[2] " + Colors.ENDC + "Create a containers")
+        print(Colors.BLUE + "[3] " + Colors.ENDC + "List processes running inside a container")
+        print(Colors.BLUE + "[4] " + Colors.ENDC + "Get containers log")
+        print(Colors.BLUE + "[5] " + Colors.ENDC + "Start a container")
+        print(Colors.BLUE + "[6] " + Colors.ENDC + "Stop a container")
+        print(Colors.BLUE + "[7] " + Colors.ENDC + "Restart a container")
+        print(Colors.BLUE + "[8] " + Colors.ENDC + "Kill a container")
+        print(Colors.BLUE + "[9] " + Colors.ENDC + "Remove a container")
+        print(Colors.BLUE + "[10] " + Colors.ENDC + "List Images")
+        print(Colors.BLUE + "[11] " + Colors.ENDC + "Remove an image")
+        print(Colors.BLUE + "[12] " + Colors.ENDC + "Get system information")
+        print(Colors.BLUE + "[13] " + Colors.ENDC + "Ping")
+        print(Colors.BLUE + "[14] " + Colors.ENDC + "Get data usage information")
+        print(Colors.BLUE + "[15] " + Colors.ENDC + "Get version")
+        print(Colors.FAIL + "[99] " + Colors.ENDC + "Exit")
+```
+
+**Explanation:**  
+Within an infinite loop, a menu is presented to the user with various Docker-related options. Each option is color-coded for better emphasis.
+
+---
+
+### **Capturing and Processing the User's Choice**
+
+```python
+user_response = int(input(": "))
+line()
+
+if user_response == 1:
+    list_containers()
+elif user_response == 2:
+    create_a_container()
+elif user_response == 3:
+    list_processes_running_inside_a_container()
+elif user_response == 4:
+    get_container_log()
+elif user_response == 5:
+    start_a_container()
+elif user_response == 6:
+    stop_a_container()
+elif user_response == 7:
+    restart_a_container()
+elif user_response == 8:
+    kill_a_container()
+elif user_response == 9:
+    remove_a_container()
+elif user_response == 10:
+    list_images()
+elif user_response == 11:
+    remove_a_image()
+elif user_response == 12:
+    get_system_information()
+elif user_response == 13:
+    ping()
+elif user_response == 14:
+    get_data_usage_information()
+elif user_response == 15:
+    get_version()
+elif user_response == 99:
+    break
+else:
+    print(Colors.FAIL + "Invalid option" + Colors.ENDC)
+```
+
+**Explanation:**  
+The program waits for a user input and tries to convert it into an integer. Based on this input, the program calls a specific function related to the chosen option. If the user enters `99`, the loop terminates. Any other input outside of the listed options will result in the message "Invalid option".
+
+---
+
+**Exception Handling**
+
+```python
+except ValueError:
+    line()
+    print(Colors.FAIL + "Invalid option" + Colors.ENDC)
+except:
+    line()
+    print(Colors.FAIL + "Unexpected error" + Colors.ENDC)
+```
+
+**Explanation:**  
+There are exception handlings in place to catch specific errors. If the user inputs an entry that can't be converted to an integer, the program will display the message "Invalid option". Any other unknown exception will result in the message "Unexpected error".
+
+
+
+# **Conclusion**
+
+The presented script is a command-line interface for managing Docker operations. It provides the user with a range of options, from listing containers, creating containers, to fetching logs and system information. The entire execution logic is structured in a continuous loop, allowing the user to perform multiple operations without having to restart the script.
+
+The code's design is intuitive and modular, with each functionality encapsulated in its own function. This not only makes the code more organized but also eases maintenance and potential future expansions.
+
+Exception handling ensures that the application will handle unexpected inputs and errors without catastrophic failures, enhancing the user experience and the application's robustness.
+
+In summary, the program is a valuable tool for anyone or team working with Docker regularly, simplifying and speeding up routine tasks.
+
+# Contributors
+
+<a href="https://github.com/Jogaridu"> Jorge Gabriel Ricci Dutra</a>,<a href="https://github.com/Aykie"> Júlia Barboza Brunelli</a>, <a href="https://github.com/NCalegariS"> Nicholas Calegari</a> e <a href="https://github.com/WHrez1ns"> Renan Dias</a>
+<br>
+**RM: 551457,98558, 93912 e 99258.**
