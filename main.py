@@ -145,7 +145,7 @@ def get_version():
 API_ADDRESS = config('API_ADDRESS')
 
 line()
-print(Colors.HEADER + "Welcome to Python App Monitor & Manager from Docker" + Colors.ENDC)
+print(Colors.HEADER + "DockGenius" + Colors.ENDC)
 
 while True:
     try:
