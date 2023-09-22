@@ -13,7 +13,7 @@
  <br>
 
 
-# Python App Monitor & Manager para Docker
+# DockGenius
 
 Este software é uma ferramenta de linha de comando desenvolvida em Python, projetada para interagir com o Docker. Ele utiliza a API do Docker para executar várias operações, permitindo ao usuário uma interface amigável e intuitiva para gerenciar seus containers e imagens Docker.
 
