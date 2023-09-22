@@ -19,8 +19,6 @@ Este software é uma ferramenta de linha de comando desenvolvida em Python, proj
 
 - Editor Utilizado: <a href="https://code.visualstudio.com/"> Visual Studio Code</a>.
 
-- [Video Explicativo](colocaolinkaq)
-
 - <a href="https://www.canva.com/design/DAFf6JnZJlo/4dJEE_-mZoVnFcOLFnx_eA/view?utm_content=DAFf6JnZJlo&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink"> Slides
   </a><br>
 
